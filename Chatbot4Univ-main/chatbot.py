@@ -29,7 +29,8 @@ import logging
 LogFormatter = logging.Formatter('%(asctime)s,%(message)s')
 
 #handler settings
-LogHandler = handlers.TimedRotatingFileHandler(filename='logs/chatbot.log', when='midnight', interval=1, encoding='utf-8')
+# LogHandler = handlers.TimedRotatingFileHandler(filename='logs/chatbot.log', when='midnight', interval=1, encoding='utf-8')
+LogHandler = handlers.TimedRotatingFileHandler(filename='/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Chatbot4Univ-main/logs/chatbot.log', when='midnight', interval=1, encoding='utf-8')
 LogHandler.setFormatter(LogFormatter)
 LogHandler.suffix = "%Y%m%d"
 
@@ -44,30 +45,44 @@ Logger.addHandler(LogHandler)
 
 # 전처리 객체 생성
 try:
-    p = Preprocess(word2index_dic='train_tools/dict/chatbot_dict.bin',
-                   userdic='utils/user_dic.tsv')
+    # p = Preprocess(word2index_dic='train_tools/dict/chatbot_dict.bin',
+    p = Preprocess(word2index_dic='/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Chatbot4Univ-main/train_tools/dict/chatbot_dict.bin',
+                #    userdic='utils/user_dic.tsv')
+                userdic='/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Chatbot4Univ-main/utils/user_dic.tsv')
     print("텍스트 전처리기 로드 완료..")
 except: print("텍스트 전처리기 로드 실패..")
 
 # 의도 파악 모델
 try:
-    intent = IntentModel(model_name='models/intent/intent_model.h5', preprocess=p)
+    # intent = IntentModel(model_name='models/intent/intent_model.h5', preprocess=p)
+    intent = IntentModel(model_name='/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Chatbot4Univ-main/models/intent/intent_model.h5', preprocess=p)
     print("의도 파악 모델 로드 완료..")
 except: print("의도 파악 모델 로드 실패..")
 
 #엑셀 파일 로드
 try:
-    df = pd.read_excel('train_tools/qna/train_data.xlsx')
+    # df = pd.read_excel('train_tools/qna/train_data.xlsx')
+    df = pd.read_excel('/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Chatbot4Univ-main/train_tools/qna/train_data.xlsx')
     print("엑셀 파일 로드 완료..")
 except: print("엑셀 파일 로드 실패..")
 
 # pt 파일 갱신 및 불러오기
+# try:
+#     create_embedding_data = create_embedding_data(df=df, preprocess=p)
+#     create_embedding_data.create_pt_file()
+#     # embedding_data = torch.load('train_tools/qna/embedding_data.pt')
+#     embedding_data = torch.load('/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Chatbot4Univ-main/train_tools/qna/embedding_data.pt')
+#     print("임베딩 pt 파일 갱신 및 로드 완료..")
+# except: print("임베딩 pt 파일 갱신 및 로드 실패..")
 try:
     create_embedding_data = create_embedding_data(df=df, preprocess=p)
     create_embedding_data.create_pt_file()
-    embedding_data = torch.load('train_tools/qna/embedding_data.pt')
+    embedding_data = torch.load('/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Chatbot4Univ-main/train_tools/qna/embedding_data.pt')
     print("임베딩 pt 파일 갱신 및 로드 완료..")
-except: print("임베딩 pt 파일 갱신 및 로드 실패..")
+except Exception as e:
+    print("임베딩 pt 파일 갱신 및 로드 실패..")
+    print(f"오류 메시지: {e}")
+
 
 
 def to_client(conn, addr):

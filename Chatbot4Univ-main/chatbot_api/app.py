@@ -9,6 +9,7 @@ port = 5500             # 챗봇 엔진 port
 
 # Flask 애플리케이션
 app = Flask(__name__)
+app.static_folder = "static"
 
 # 챗봇 엔진 서버와 통신
 def get_answer_from_engine(bottype, query):
@@ -32,6 +33,7 @@ def get_answer_from_engine(bottype, query):
     mySocket.close()
 
     return ret_data
+# 서버 설정 완료
 
 @app.route('/hello', methods=['GET'])
 def index():
@@ -83,3 +85,28 @@ def image(image_file):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
+
+
+# 영웅 작성 부분
+# 주소로 들어갔을 때 chat.html을 여는 코드
+@app.route('/', methods=['GET'])
+def hello():
+    return render_template('/chat.html')
+
+@app.route('/post', methods=['GET','POST'])
+def post():
+    if request.method == 'POST':
+        value = request.form['client_chat']
+        value = str(value)
+        print(value)
+    return render_template('post.html')
+
+@app.route('/tmp', methods=['GET','POST'])
+def send_message_to_html():
+    value = 'hello, world'
+    # return render_template('chat.html', value = value)
+    return render_template('/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Front/chat.html', value = value)
+
+
+
+
