@@ -4,12 +4,12 @@ import json
 
 # 챗봇 엔진 서버 정보
 host = "127.0.0.1"      # 챗봇 엔진 서버 IP
-# port = 5050             # 챗봇 엔진 port
-port = 5500             # 챗봇 엔진 port
+port = 5050             # 챗봇 엔진 port
+# port = 5500             # 챗봇 엔진 port
 
 # Flask 애플리케이션
 app = Flask(__name__)
-app.static_folder = "static"
+app.static_folder = "static" # css를 적용하기 위해 static 폴더 위치 알림
 
 # 챗봇 엔진 서버와 통신
 def get_answer_from_engine(bottype, query):
@@ -35,48 +35,91 @@ def get_answer_from_engine(bottype, query):
     return ret_data
 # 서버 설정 완료
 
-@app.route('/hello', methods=['GET'])
-def index():
-    try:
-        message = "안녕하세요, 호서대학교 챗봇 바울(PAUL)입니다.\n" \
-                  "현재 다음 기능을 제공하고 있습니다.\n" \
-                  "1.번호안내 2.장소안내\n" \
-                  "사용예시 - (학과/트랙/기관명)번호 알려줘, (건물이름)위치 알려줘\n" \
-                  "사용예시2 - 컴퓨터공학부 번호 알려줘, 상담실 위치 알려줘\n"\
-                  "답변 받고 싶은 질문을 입력해주시면 빠르게 업데이트 하겠습니다."
+# @app.route('/hello', methods=['GET'])
+# def index():
+#     try:
+#         message = "안녕하세요, 호서대학교 챗봇 바울(PAUL)입니다.\n" \
+#                   "현재 다음 기능을 제공하고 있습니다.\n" \
+#                   "1.번호안내 2.장소안내\n" \
+#                   "사용예시 - (학과/트랙/기관명)번호 알려줘, (건물이름)위치 알려줘\n" \
+#                   "사용예시2 - 컴퓨터공학부 번호 알려줘, 상담실 위치 알려줘\n"\
+#                   "답변 받고 싶은 질문을 입력해주시면 빠르게 업데이트 하겠습니다."
 
-        json_data = {
-            'message': message
-        }
-        message = json.dumps(json_data, ensure_ascii=False)
-        message = json.loads(message)
-        return jsonify(message)
+#         json_data = {
+#             'message': message
+#         }
+#         message = json.dumps(json_data, ensure_ascii=False)
+#         message = json.loads(message)
+#         return jsonify(message)
 
-    except Exception as ex:
-        # 오류 발생 시 500 Error
-        abort(500)
+#     except Exception as ex:
+#         # 오류 발생 시 500 Error
+#         abort(500)
+
+# 주소로 들어갔을 때 chat.html을 여는 코드
+@app.route('/', methods=['GET'])
+def main_chat():
+    return render_template('/chat.html')
+
+
+from datetime import datetime
+
+@app.route("/query", methods=["POST"])
+def process_query():
+    query = request.form["client_chat"]
+    bot_response = get_answer_from_engine(bottype="NORMAL", query=query)
+    messages = [bot_response['Answer']]
+    current_time = datetime.now().strftime("%H:%M")
+
+    return render_template("chat.html", messages=messages, current_time=current_time)
+
+
+# @app.route('/query/<bot_type>', methods=['POST'])
+# # @app.route('/query', methods=['POST'])
+# def query(bot_type):
+#     body = request.get_json()
+#     # response = {"from": "user", "content" : query}
+
+#     try:
+#         if bot_type == 'NORMAL':
+#             # 일반 질의응답 API
+#             ret = get_answer_from_engine(bottype=bot_type, query=body["client_chat"])
+#             print(query)
+
+#             return jsonify(ret)
+#         elif bot_type == 'QUICK':
+#             with open("/home/hoseo420/python_chatbot/Chatbot4Univ/chatbot_api/static/json/quick_reply.json", "r", encoding='utf-8') as json_file:
+#                 jdata = json.load(json_file)
+#             return jdata
+#         else:
+#             # 정의되지 않은 bot type인 경우 404 Error
+#             abort(404)
+
+#     except Exception as ex:
+#         # 오류 발생 시 500 Error
+#         abort(500)
 
 
 # 챗봇 엔진 query 전송 API
-@app.route('/query/<bot_type>', methods=['GET', 'POST'])
-def query(bot_type):
-    body = request.get_json()
-    try:
-        if bot_type == 'NORMAL':
-            # 일반 질의응답 API
-            ret = get_answer_from_engine(bottype=bot_type, query=body['query'])
-            return jsonify(ret)
-        elif bot_type == 'QUICK':
-            with open("/home/hoseo420/python_chatbot/Chatbot4Univ/chatbot_api/static/json/quick_reply.json", "r", encoding='utf-8') as json_file:
-                jdata = json.load(json_file)
-            return jdata
-        else:
-            # 정의되지 않은 bot type인 경우 404 Error
-            abort(404)
+# @app.route('/query/<bot_type>', methods=['GET', 'POST'])
+# def query(bot_type):
+#     body = request.get_json()
+#     try:
+#         if bot_type == 'NORMAL':
+#             # 일반 질의응답 API
+#             ret = get_answer_from_engine(bottype=bot_type, query=body['query'])
+#             return jsonify(ret)
+#         elif bot_type == 'QUICK':
+#             with open("/home/hoseo420/python_chatbot/Chatbot4Univ/chatbot_api/static/json/quick_reply.json", "r", encoding='utf-8') as json_file:
+#                 jdata = json.load(json_file)
+#             return jdata
+#         else:
+#             # 정의되지 않은 bot type인 경우 404 Error
+#             abort(404)
 
-    except Exception as ex:
-        # 오류 발생 시 500 Error
-        abort(500)
+#     except Exception as ex:
+#         # 오류 발생 시 500 Error
+#         abort(500)
 
 # 이미지 테스트
 @app.route('/images/<image_file>', methods=['GET'])
@@ -88,24 +131,19 @@ if __name__ == '__main__':
 
 
 # 영웅 작성 부분
-# 주소로 들어갔을 때 chat.html을 여는 코드
-@app.route('/', methods=['GET'])
-def hello():
-    return render_template('/chat.html')
+# @app.route('/post', methods=['GET','POST'])
+# def post():
+#     if request.method == 'POST':
+#         value = request.form['client_chat']
+#         value = str(value)
+#         print(value)
+#     return render_template('post.html')
 
-@app.route('/post', methods=['GET','POST'])
-def post():
-    if request.method == 'POST':
-        value = request.form['client_chat']
-        value = str(value)
-        print(value)
-    return render_template('post.html')
-
-@app.route('/tmp', methods=['GET','POST'])
-def send_message_to_html():
-    value = 'hello, world'
-    # return render_template('chat.html', value = value)
-    return render_template('/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Front/chat.html', value = value)
+# @app.route('/tmp', methods=['GET','POST'])
+# def send_message_to_html():
+#     value = 'hello, world'
+#     # return render_template('chat.html', value = value)
+#     return render_template('/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Front/chat.html', value = value)
 
 
 

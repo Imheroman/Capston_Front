@@ -45,9 +45,7 @@
       </div>
     </header>
 
-    <main class="main-screen main-chat">
-      <div class="chat__timestamp">Tuesday, June 30, 2020</div>
-      <div class="message-row">
+      <!-- <div class="message-row">
         <img
           src="https://monthly.chosun.com/up_fd/Mdaily/2017-09/bimg_thumb/2017042000056_0.jpg"
         />
@@ -59,7 +57,23 @@
             <span class="message__time">21:22</span>
           </div>
         </div>
-      </div>
+      </div> -->
+    <main class="main-screen main-chat">
+      <div class="chat__timestamp">Tuesday, June 30, 2020</div>
+      {% if messages %}
+        <div class="message-row">
+          <img src="https://monthly.chosun.com/up_fd/Mdaily/2017-09/bimg_thumb/2017042000056_0.jpg" />
+          <div class="message-row__content">
+            <span class="message__author">Bot</span>
+              <div class="message__info">
+              {% for message in messages %}
+                <span class="message__bubble">{{ message }}</span>
+              {% endfor %}
+              <span class="message__time">{{ current_time }}</span>
+              </div>
+          </div>
+       </div>
+      {% endif %}
 
       <div class="message-row message-row--own">
         <div class="message-row__content">
@@ -81,22 +95,7 @@
 
 
 
-
-
-    <!-- <form class="reply">
-      <div class="reply__column">
-        <i class="far fa-plus-square fa-lg"></i>
-      </div>
-
-      <div class="reply__column">
-        <input type="text" placeholder="Write a message..." />
-        <i class="far fa-smile-wink fa-lg"></i>
-        <button id = "send-message-btn">
-          <i class="fas fa-arrow-up"></i>
-        </button>
-      </div>
-    </form> -->
-    <form class="reply" action = "\post" method = "post">
+    <form class="reply" action = "/query" method = "post">
       <div class="reply__column">
         <i class="far fa-plus-square fa-lg"></i>
       </div>
@@ -118,10 +117,7 @@
 
 
 
-
-
-
-    <script> <!-- 내가 보낸 메세지들을 연속으로 사용할 수 있게 만드는 부분 -->
+    <!-- <script>  내가 보낸 메세지들을 연속으로 사용할 수 있게 만드는 부분
       const sendMessageBtn = document.getElementById('send-message-btn');
       const messageInput = document.querySelector('.reply__column input');
       const chatScreen = document.querySelector('.main-chat');
@@ -158,7 +154,7 @@
         return `${hour}:${minute}`;
       }
 
-    </script>
+    </script> -->
     
   </body>
 </html>
