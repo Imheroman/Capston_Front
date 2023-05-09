@@ -35,6 +35,34 @@ def get_answer_from_engine(bottype, query):
     return ret_data
 # 서버 설정 완료
 
+@app.route('/', methods=['GET'])
+def main_chat():
+    return render_template('/chat.html')
+
+
+from datetime import datetime
+
+@app.route("/query", methods=["Get", "POST"])
+def process_query():
+    query = request.form["client_chat"]
+    print("Message: " + query)
+    bot_response = get_answer_from_engine(bottype="NORMAL", query=query)
+    messages = [bot_response['Answer']]
+    current_time = datetime.now().strftime("%H:%M")
+
+    return jsonify(messages=messages, current_time=current_time)
+
+# 이미지 테스트
+# @app.route('/images/<image_file>', methods=['GET'])
+# def image(image_file):
+#     return render_template('img.html', image_file='/resize_images/'+image_file+'_resize.jpg')
+
+if __name__ == '__main__':
+    # app.debug = True
+    app.run(host='0.0.0.0', port=5001)
+
+
+# 원래 있던 코드
 # @app.route('/hello', methods=['GET'])
 # def index():
 #     try:
@@ -57,48 +85,6 @@ def get_answer_from_engine(bottype, query):
 #         abort(500)
 
 # 주소로 들어갔을 때 chat.html을 여는 코드
-@app.route('/', methods=['GET'])
-def main_chat():
-    return render_template('/chat.html')
-
-
-from datetime import datetime
-
-@app.route("/query", methods=["POST"])
-def process_query():
-    query = request.form["client_chat"]
-    bot_response = get_answer_from_engine(bottype="NORMAL", query=query)
-    messages = [bot_response['Answer']]
-    current_time = datetime.now().strftime("%H:%M")
-
-    return render_template("chat.html", messages=messages, current_time=current_time)
-
-
-# @app.route('/query/<bot_type>', methods=['POST'])
-# # @app.route('/query', methods=['POST'])
-# def query(bot_type):
-#     body = request.get_json()
-#     # response = {"from": "user", "content" : query}
-
-#     try:
-#         if bot_type == 'NORMAL':
-#             # 일반 질의응답 API
-#             ret = get_answer_from_engine(bottype=bot_type, query=body["client_chat"])
-#             print(query)
-
-#             return jsonify(ret)
-#         elif bot_type == 'QUICK':
-#             with open("/home/hoseo420/python_chatbot/Chatbot4Univ/chatbot_api/static/json/quick_reply.json", "r", encoding='utf-8') as json_file:
-#                 jdata = json.load(json_file)
-#             return jdata
-#         else:
-#             # 정의되지 않은 bot type인 경우 404 Error
-#             abort(404)
-
-#     except Exception as ex:
-#         # 오류 발생 시 500 Error
-#         abort(500)
-
 
 # 챗봇 엔진 query 전송 API
 # @app.route('/query/<bot_type>', methods=['GET', 'POST'])
@@ -120,31 +106,3 @@ def process_query():
 #     except Exception as ex:
 #         # 오류 발생 시 500 Error
 #         abort(500)
-
-# 이미지 테스트
-@app.route('/images/<image_file>', methods=['GET'])
-def image(image_file):
-    return render_template('img.html', image_file='/resize_images/'+image_file+'_resize.jpg')
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
-
-
-# 영웅 작성 부분
-# @app.route('/post', methods=['GET','POST'])
-# def post():
-#     if request.method == 'POST':
-#         value = request.form['client_chat']
-#         value = str(value)
-#         print(value)
-#     return render_template('post.html')
-
-# @app.route('/tmp', methods=['GET','POST'])
-# def send_message_to_html():
-#     value = 'hello, world'
-#     # return render_template('chat.html', value = value)
-#     return render_template('/Users/kim-young-woong/Desktop/Visual/Capstone/git-dir/Capston_Front/Front/chat.html', value = value)
-
-
-
-
