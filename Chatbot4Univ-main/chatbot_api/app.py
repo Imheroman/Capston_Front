@@ -35,31 +35,39 @@ def get_answer_from_engine(bottype, query):
     return ret_data
 # 서버 설정 완료
 
+from datetime import datetime
+
+current_time = datetime.now().strftime("%H:%M")
+
 @app.route('/', methods=['GET'])
 def main_chat():
-    return render_template('/chat.html')
-
-
-from datetime import datetime
+    return render_template('/chat.html', current_time=current_time)
 
 @app.route("/query", methods=["Get", "POST"])
 def process_query():
     query = request.form["client_chat"]
-    print("Message: " + query)
     bot_response = get_answer_from_engine(bottype="NORMAL", query=query)
     messages = [bot_response['Answer']]
-    current_time = datetime.now().strftime("%H:%M")
+    # img_url = []  # 빈 리스트로 초기화
+
+    # 이미지 URL이 쉼표(,)로 구분되어 있는 경우 분리하여 리스트에 추가
+    # img_urls = bot_response["imageUrl"].split(", ")
+    # img_url.extend(img_urls)
+
+    print("query: " + query)
+    print("messages: " + str(messages))
+    # print("img: " + str(img_url))
 
     return jsonify(messages=messages, current_time=current_time)
+
+if __name__ == '__main__':
+    # app.debug = True
+    app.run(host='0.0.0.0', port=5001)
 
 # 이미지 테스트
 # @app.route('/images/<image_file>', methods=['GET'])
 # def image(image_file):
 #     return render_template('img.html', image_file='/resize_images/'+image_file+'_resize.jpg')
-
-if __name__ == '__main__':
-    # app.debug = True
-    app.run(host='0.0.0.0', port=5001)
 
 
 # 원래 있던 코드
