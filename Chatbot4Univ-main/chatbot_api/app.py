@@ -35,13 +35,69 @@ def get_answer_from_engine(bottype, query):
     return ret_data
 # 서버 설정 완료
 
+
+
+
 from datetime import datetime
 
 current_time = datetime.now().strftime("%H:%M")
 
+# 기본적인 하단 메뉴 html 주소 추가
 @app.route('/', methods=['GET'])
 def main_chat():
+    return render_template('/settings.html', current_time=current_time)
+
+@app.route('/friends.html', methods=['GET'])
+def friends():
+    return render_template('/friends.html')
+
+@app.route('/chats.html', methods=['GET'])
+def chats():
+    return render_template('/chats.html', current_time=current_time)
+
+@app.route('/find.html', methods=['GET'])
+def find():
+    return render_template('/find.html')
+
+@app.route('/more.html', methods=['GET'])
+def more():
+    return render_template('/more.html')
+
+@app.route('/settings.html', methods=['GET'])
+def settings():
+    return render_template('/settings.html')
+
+# 부가 기능 추가
+@app.route('/index.html', methods=['GET'])
+def index():
+    return render_template('/index.html')
+
+@app.route('/chat.html', methods=['GET'])
+def chat():
     return render_template('/chat.html', current_time=current_time)
+
+@app.route('/chatapeach.html', methods=['GET'])
+def chatapeach():
+    return render_template('/chatapeach.html', current_time=current_time)
+
+@app.route('/chatneo.html', methods=['GET'])
+def chatneo():
+    return render_template('/chatneo.html', current_time=current_time)
+
+@app.route('/chatmuji.html', methods=['GET'])
+def chatmuji():
+    return render_template('/chatmuji.html', current_time=current_time)
+
+@app.route('/chattube.html', methods=['GET'])
+def chattube():
+    return render_template('/chattube.html', current_time=current_time)
+
+
+
+
+
+
+
 
 @app.route("/query", methods=["Get", "POST"])
 def process_query():
